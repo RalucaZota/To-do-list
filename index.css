@@ -1,0 +1,18 @@
+div {
+text-align: center;
+height: 30px;
+}
+
+input {
+    margin: 0 auto;
+    height: 100%;
+    font-size: 30px;
+}
+
+li {
+    font-size: 30px;
+}
+
+button {
+    font-size: 30px;
+}
