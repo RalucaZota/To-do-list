@@ -7,7 +7,7 @@ let task = { id: counter, value: '' };
 
 const addTask = () => {
   if (input.value.trim() === '') return;
-  let task = { id: counter++, value: input.value };
+  let task = { id: counter++, value: input.value, completed: false };
   tasks.push(task);
 
   const taskElement = document.createElement('li');
@@ -16,27 +16,38 @@ const addTask = () => {
   const taskText = document.createElement('span');
   taskText.textContent = task.value;
 
-  const deleteButton = document.createElement('button');
-  deleteButton.textContent = 'Delete task';
-  console.log(task, 'task');
+  const checkboxInput = document.createElement('input');
+  checkboxInput.setAttribute('type', 'checkbox');
+  checkboxInput.checked = task.completed;
 
   taskElement.appendChild(taskText);
+  taskElement.appendChild(checkboxInput);
   listBody.appendChild(taskElement);
-  taskElement.appendChild(deleteButton);
 
   input.value = '';
+  // console.log(task, 'task');
 
-  deleteButton.addEventListener('click', deleteTask);
+  checkboxInput.addEventListener('change', () => toggleCheckbox(task.id, checkboxInput));
 };
 
-const deleteTask = (event) => {
-  const li = event.target.parentElement;
-  const idToDelete = parseInt(li.id);
-  li.remove();
+const toggleCheckbox = ( id, checkbox) => {
+  const taskIndex = tasks.findIndex((task) => task.id === id);
 
-  const filteredTasks = tasks.filter((task) => task.id !== idToDelete);
-  tasks = filteredTasks;
+  if (taskIndex !== -1) {
+    tasks[taskIndex].completed = checkbox.checked;
+  
+  // const li = event.target.parentElement;
+  // const idToDelete = parseInt(li.id);
+  // li.remove();
+
+  console.log(checkbox.checked, 'checkbox.completed');
+  
+  tasks = tasks.filter((task) => task.id !== id);
+  console.log(tasks, 'tasks');
+  
   return tasks;
 };
+}
+
 
 addButton.addEventListener('click', addTask);
