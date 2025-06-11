@@ -2,15 +2,25 @@ const input = document.querySelector('input');
 const addButton = document.querySelector('.add-button');
 const deleteButton = document.querySelector('.delete-button');
 const listBody = document.querySelector('ol');
-let counter = 0;
-let tasks = [];
+let counter = localStorage.getItem('counter') ? parseInt(localStorage.getItem('counter')) : 0;
+let tasks = localStorage.getItem('tasks') ? JSON.parse(localStorage.getItem('tasks')) : [];
+console.log(tasks, 'tasks');
+
 let task = { id: counter, value: '', completed: false };
 
 const addTask = () => {
   if (input.value.trim() === '') return;
   let task = { id: counter++, value: input.value, completed: false };
   tasks.push(task);
+  input.value = '';
+  createTask(task)
 
+
+  console.log(tasks, 'tasks');
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+};
+
+const createTask = (task) => {
   const taskElement = document.createElement('li');
   taskElement.setAttribute('id', task.id);
 
@@ -29,11 +39,11 @@ const addTask = () => {
   taskElement.appendChild(checkboxInput);
   listBody.appendChild(taskElement);
 
-  input.value = '';
+  checkboxInput.addEventListener('change', () => toggleCheckbox(task.id, checkboxInput, taskText));
+}
 
-checkboxInput.addEventListener('change', () => toggleCheckbox(task.id, checkboxInput, taskText));
-
-  console.log(tasks, 'tasks');
+const getTaskFromLocalStorage = () => {
+  tasks.forEach((task) => createTask(task));
 };
 
 const toggleCheckbox = (id, checkbox, taskText) => {
@@ -50,6 +60,7 @@ const toggleCheckbox = (id, checkbox, taskText) => {
 
     console.log(checkbox.checked, 'checkbox.completed');
     console.log(tasks, 'tasks');
+    localStorage.setItem("tasks", JSON.stringify(tasks));
   }
 };
 
@@ -59,10 +70,11 @@ const deleteTask = () => {
       document.getElementById(task.id).remove();
     }
   });
-  console.log(tasks.filter((task) => !task.completed));
-
-  return (tasks = tasks.filter((task) => !task.completed));
+  
+  const updatedTasks = tasks.filter((task) => !task.completed);
+  localStorage.setItem("tasks", JSON.stringify(updatedTasks));
 };
 
 addButton.addEventListener('click', addTask);
 deleteButton.addEventListener('click', deleteTask);
+getTaskFromLocalStorage();
