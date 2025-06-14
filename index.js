@@ -2,21 +2,20 @@ const input = document.querySelector('input');
 const addButton = document.querySelector('.add-button');
 const deleteButton = document.querySelector('.delete-button');
 const listBody = document.querySelector('ol');
+
 let counter = localStorage.getItem('counter') ? parseInt(localStorage.getItem('counter')) : 0;
 let tasks = localStorage.getItem('tasks') ? JSON.parse(localStorage.getItem('tasks')) : [];
-console.log(tasks, 'tasks');
 
 let task = { id: counter, value: '', completed: false };
 
 const addTask = () => {
   if (input.value.trim() === '') return;
+
   let task = { id: counter++, value: input.value, completed: false };
   tasks.push(task);
   input.value = '';
   createTask(task)
-
-
-  console.log(tasks, 'tasks');
+  localStorage.setItem('counter', counter);
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
@@ -43,6 +42,7 @@ const createTask = (task) => {
 }
 
 const getTaskFromLocalStorage = () => {
+  console.log(tasks, 'getTaskFromLocalStorage');
   tasks.forEach((task) => createTask(task));
 };
 
@@ -57,24 +57,22 @@ const toggleCheckbox = (id, checkbox, taskText) => {
     } else {
       taskText.classList.remove('completed');
     }
-
-    console.log(checkbox.checked, 'checkbox.completed');
-    console.log(tasks, 'tasks');
-    localStorage.setItem("tasks", JSON.stringify(tasks));
   }
 };
 
 const deleteTask = () => {
   tasks.forEach((task) => {
     if (task.completed) {
-      document.getElementById(task.id).remove();
+      document.getElementById(task.id).remove()     
     }
   });
-  
-  const updatedTasks = tasks.filter((task) => !task.completed);
-  localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+   
+  tasks = tasks.filter((task) => !task.completed);
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  console.log(tasks, 'tasks delte task');
 };
 
 addButton.addEventListener('click', addTask);
 deleteButton.addEventListener('click', deleteTask);
-getTaskFromLocalStorage();
+
+getTaskFromLocalStorage()
