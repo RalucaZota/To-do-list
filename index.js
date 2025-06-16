@@ -14,9 +14,9 @@ const addTask = () => {
   let task = { id: counter++, value: input.value, completed: false };
   tasks.push(task);
   input.value = '';
-  createTask(task)
+  createTask(task);
   localStorage.setItem('counter', counter);
-  localStorage.setItem("tasks", JSON.stringify(tasks));
+  localStorage.setItem('tasks', JSON.stringify(tasks));
 };
 
 const createTask = (task) => {
@@ -30,16 +30,22 @@ const createTask = (task) => {
   checkboxInput.setAttribute('type', 'checkbox');
   checkboxInput.checked = task.completed;
 
+  const editButton = document.createElement('button');
+  editButton.textContent = 'Edit task';
+
   if (task.completed) {
     taskText.classList.add('completed');
   }
 
   taskElement.appendChild(taskText);
   taskElement.appendChild(checkboxInput);
+  taskElement.appendChild(editButton);
   listBody.appendChild(taskElement);
 
   checkboxInput.addEventListener('change', () => toggleCheckbox(task.id, checkboxInput, taskText));
-}
+
+  editButton.addEventListener('click', () => editTask(task, taskElement, taskText, checkboxInput));
+};
 
 const getTaskFromLocalStorage = () => {
   console.log(tasks, 'getTaskFromLocalStorage');
@@ -51,7 +57,7 @@ const toggleCheckbox = (id, checkbox, taskText) => {
 
   if (taskIndex !== -1) {
     tasks[taskIndex].completed = checkbox.checked;
-    
+
     if (checkbox.checked) {
       taskText.classList.add('completed');
     } else {
@@ -63,16 +69,44 @@ const toggleCheckbox = (id, checkbox, taskText) => {
 const deleteTask = () => {
   tasks.forEach((task) => {
     if (task.completed) {
-      document.getElementById(task.id).remove()     
+      document.getElementById(task.id).remove();
     }
   });
-   
+
   tasks = tasks.filter((task) => !task.completed);
-  localStorage.setItem("tasks", JSON.stringify(tasks));
+  localStorage.setItem('tasks', JSON.stringify(tasks));
   console.log(tasks, 'tasks delte task');
+};
+
+const editTask = (task, taskElement, taskText, checkboxInput) => {
+  const editInput = document.createElement('input');
+  editInput.setAttribute('type', 'text');
+  editInput.value = task.value;
+  taskText.remove();
+  checkboxInput.remove();
+
+  taskElement.appendChild(editInput);
+
+  const saveButton = document.createElement('button');
+  saveButton.textContent = 'Save task';
+  taskElement.appendChild(saveButton);
+  saveButton.addEventListener('click', () =>
+    saveUpdatedTask(task, editInput, taskText)
+  );
+};
+
+const saveUpdatedTask = (task, editInput, taskElement) => {
+  console.log(task);
+ task.value = editInput.value;
+
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+
+  listBody.innerHTML = '';
+  
+  tasks.forEach((task) => createTask(task));
 };
 
 addButton.addEventListener('click', addTask);
 deleteButton.addEventListener('click', deleteTask);
 
-getTaskFromLocalStorage()
+getTaskFromLocalStorage();
